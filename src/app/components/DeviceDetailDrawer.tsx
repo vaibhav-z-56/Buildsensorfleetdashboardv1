@@ -10,6 +10,7 @@ import { X, Battery, Signal, MapPin, Cpu, Hash } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface DeviceDetailDrawerProps {
   device: Device | null;
@@ -165,6 +166,49 @@ export function DeviceDetailDrawer({
               <h3 className="text-sm font-semibold mb-2">Last Seen</h3>
               <div className="text-sm text-muted-foreground">
                 {format(device.lastSeen, 'PPpp')}
+              </div>
+            </div>
+
+            <div className="border-t pt-4">
+              <h3 className="text-sm font-semibold mb-3">24-Hour Telemetry</h3>
+              <div className="h-[200px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={device.telemetry24h.map((reading) => ({
+                      time: format(reading.timestamp, 'HH:mm'),
+                      value: reading.value,
+                    }))}
+                    margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis
+                      dataKey="time"
+                      tick={{ fontSize: 10 }}
+                      interval={47}
+                      className="text-muted-foreground"
+                    />
+                    <YAxis
+                      tick={{ fontSize: 10 }}
+                      width={40}
+                      className="text-muted-foreground"
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--background))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>

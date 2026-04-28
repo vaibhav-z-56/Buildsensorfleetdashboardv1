@@ -8,6 +8,37 @@ interface DeviceCardProps {
   onClick: () => void;
 }
 
+function Sparkline({ data }: { data: number[] }) {
+  if (data.length === 0) return null;
+
+  const width = 120;
+  const height = 24;
+  const padding = 2;
+
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+
+  const points = data.map((value, index) => {
+    const x = (index / (data.length - 1)) * (width - padding * 2) + padding;
+    const y = height - padding - ((value - min) / range) * (height - padding * 2);
+    return `${x},${y}`;
+  }).join(' ');
+
+  return (
+    <svg width={width} height={height} className="opacity-60">
+      <polyline
+        points={points}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function DeviceCard({ device, onClick }: DeviceCardProps) {
   const statusColors = {
     online: 'bg-green-500',
@@ -64,6 +95,13 @@ export function DeviceCard({ device, onClick }: DeviceCardProps) {
 
         <div className="text-xs text-muted-foreground">
           {device.location.address}
+        </div>
+
+        <div className="pt-2 border-t">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Last 10 readings</span>
+            <Sparkline data={device.recentReadings.map((r) => r.value)} />
+          </div>
         </div>
       </div>
     </Card>

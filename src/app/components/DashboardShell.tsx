@@ -2,6 +2,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router';
 import { Map, Monitor, Bell, LogOut, Menu } from 'lucide-react';
 import { Button } from './ui/button';
 import { useState } from 'react';
+import { AlertBanner } from './AlertBanner';
 
 export function DashboardShell() {
   const navigate = useNavigate();
@@ -94,6 +95,8 @@ export function DashboardShell() {
           </nav>
         )}
       </header>
+
+      <AlertBanner />
 
       <main className="flex-1 overflow-auto">
         <Outlet />
